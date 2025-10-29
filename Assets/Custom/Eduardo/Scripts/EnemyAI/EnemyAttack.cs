@@ -5,13 +5,13 @@ public class EnemyAttack : MonoBehaviour
     [Header("Configuración de Ataque")]
     [SerializeField] private float attackCooldown = 2f;  // Tiempo en segundos entre ataques
     [SerializeField] private float attackPower = 5f;     // Fuerza del empujón
-    
+
     [Header("Referencias")]
     [SerializeField] private Transform playerTransform; // Referencia al jugador
 
-    
+
     private float lastAttackTime = 0f;
-    
+
     void Start()
     {
         // Buscar el jugador automáticamente si no se ha asignado
@@ -24,7 +24,7 @@ public class EnemyAttack : MonoBehaviour
             }
         }
     }
-    
+
     /// Ataca al jugador empujándolo. Solo funciona si el cooldown ha terminado.
     public void AttackPlayer()
     {
@@ -33,17 +33,17 @@ public class EnemyAttack : MonoBehaviour
         {
             return;
         }
-        
+
         // Verificar que tengamos referencia al jugador
         if (playerTransform == null)
         {
             Debug.LogWarning("No se encontró referencia al jugador");
             return;
         }
-        
+
         // Calcular la dirección del empujón
         Vector3 direction = (playerTransform.position - transform.position).normalized;
-        
+
         // Buscar el script de knockback del jugador primero
         PlayerKnockback playerKnockback = playerTransform.GetComponent<PlayerKnockback>();
         if (playerKnockback != null)
@@ -76,27 +76,27 @@ public class EnemyAttack : MonoBehaviour
                 }
             }
         }
-        
+
         // Actualizar el tiempo del último ataque
         lastAttackTime = Time.time;
     }
-    
+
     private System.Collections.IEnumerator KnockbackCharacterController(CharacterController cc, Vector3 knockbackForce)
     {
         float elapsedTime = 0f;
         float knockbackDuration = 0.3f; // Duración del empujón
-        
+
         while (elapsedTime < knockbackDuration)
         {
             elapsedTime += Time.deltaTime;
             float normalizedTime = elapsedTime / knockbackDuration;
             float forceMultiplier = Mathf.Lerp(1f, 0f, normalizedTime); // Suavizado del empujón
-            
+
             cc.Move(knockbackForce * forceMultiplier * Time.deltaTime);
             yield return null;
         }
     }
-    
+
     /// Comprueba si el ataque está disponible (cooldown terminado)
     public bool CanAttack()
     {

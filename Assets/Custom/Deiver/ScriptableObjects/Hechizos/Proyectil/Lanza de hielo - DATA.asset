@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbbeaffaa1eecc64082077fb9b8f6cf2, type: 3}
+  m_Name: Lanza de hielo - DATA
+  m_EditorClassIdentifier: Assembly-CSharp::HechizoProyectil
+  nombreHechizo: Lanza de hielo
+  descripcion: 
+  icono: {fileID: 0}
+  sonidoLanzamiento: {fileID: 0}
+  costoMana: 20
+  cooldown: 3
+  prefabProyectil: {fileID: 5687234378199706717, guid: d422cfbbfd2a86d91989141dfd12fc64, type: 3}

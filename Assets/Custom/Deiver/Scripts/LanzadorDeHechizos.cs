@@ -1,162 +1,96 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))] // Buena práctica
 public class LanzadorDeHechizos : MonoBehaviour
 {
     [Header("Estadísticas del Jugador")]
     public float saludActual = 100f;
     public float escudoActual = 0f;
 
-    [Header("Configuración de Hechizos")]
-    public GameObject prefabBolaDeFuego;
-    public GameObject prefabLanzaDeHielo;
-    public Transform puntoDeLanzamiento; // Un 'Empty' hijo de la cámara
+    // --- REFACTORIZADO ---
+    // ¡Ya no necesitamos referencias a prefabs o sonidos aquí!
+    // Solo tenemos una "Barra de Acción" de hechizos.
+    [Header("Barra de Hechizos")]
+    public Hechizo[] hechizosEnBarra = new Hechizo[3];
 
-    [Header("Buff: Escudo Arcano")]
-    public float cantidadEscudo = 50f;
-    public GameObject vfxEscudo; // La esfera semitransparente
-
-    // ¡NUEVO! Necesitamos una referencia a la cámara
+    [Header("Componentes del Lanzador")]
+    // Estos componentes deben ser públicos para que los
+    // Hechizos (ScriptableObjects) puedan usarlos.
+    public Transform puntoDeLanzamiento;
     public Camera camaraDelJugador;
+    public AudioSource audioSource;
 
-    // --- NUEVO: SECCIÓN DE SONIDO ---
-    [Header("Audio Feedback (Lanzamiento)")]
-    public AudioClip sonidoLanzarFuego;
-    public AudioClip sonidoLanzarHielo;
-    public AudioClip sonidoLanzarEscudo;
-    private AudioSource audioSource;
-    // --- FIN NUEVO ---
+    [Header("Efectos Internos")]
+    public GameObject vfxEscudo; // Se queda aquí, es un efecto del *jugador*
+    // --- FIN REFACTORIZADO ---
 
     void Start()
     {
         if (vfxEscudo != null)
         {
-            vfxEscudo.SetActive(false); // Asegurarse de que el escudo esté apagado al iniciar
+            vfxEscudo.SetActive(false);
         }
 
         if (camaraDelJugador == null)
         {
-            camaraDelJugador = Camera.main; // Intenta encontrarla automáticamente
+            camaraDelJugador = Camera.main;
         }
 
+        // Asignamos la referencia pública
         audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        // --- BUCLUS DE JUEGO PRINCIPAL: DETECTAR INPUT ---
+        // --- REFACTORIZADO ---
+        // El Update es ahora limpio, genérico y escalable.
 
-        // 1. Lanzar Bola de Fuego
+        // Lanzar Hechizo 1
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            LanzarProyectil(prefabBolaDeFuego);
+            // Si hay un hechizo en la ranura 0, intenta lanzarlo.
+            hechizosEnBarra[0]?.Lanzar(this);
+            // El '?' (operador null-conditional) evita errores
+            // si la ranura está vacía.
         }
 
-        // 2. Lanzar Lanza de Hielo
+        // Lanzar Hechizo 2
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            LanzarProyectil(prefabLanzaDeHielo);
+            hechizosEnBarra[1]?.Lanzar(this);
         }
 
-        // 3. Lanzar Escudo Arcano
+        // Lanzar Hechizo 3
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            LanzarEscudoArcano();
+            hechizosEnBarra[2]?.Lanzar(this);
         }
+        // --- FIN REFACTORIZADO ---
     }
 
-    // --- LÓGICA DE LANZAMIENTO ---
-
-    void LanzarProyectil(GameObject prefabHechizo)
+    // --- LÓGICA DE BUFF (Ahora es una API pública) ---
+    // Esta función es llamada por el 'HechizoBuff'
+    public void AplicarEscudo(float cantidad)
     {
-        if (prefabHechizo == null || puntoDeLanzamiento == null)
-        {
-            Debug.LogError("¡Falta el Prefab del hechizo o el Punto de Lanzamiento!");
-            return;
-        }
-
-        Debug.Log($"Lanzando {prefabHechizo.name}");
-
-        // 1. Calcular el punto de mira (target)
-        Vector3 puntoDeMira;
-        RaycastHit hit;
-
-        // Lanzamos un rayo desde el centro de la cámara
-        Ray rayo = camaraDelJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-
-        if (Physics.Raycast(rayo, out hit))
-        {
-            // Si golpeamos algo, ese es nuestro objetivo
-            puntoDeMira = hit.point;
-        }
-        else
-        {
-            // Si no golpeamos nada, el objetivo es un punto lejano
-            puntoDeMira = rayo.GetPoint(100); // 100 metros
-        }
-
-        // 2. Calcular la dirección desde el punto de lanzamiento hacia el punto de mira
-        Vector3 direccion = (puntoDeMira - puntoDeLanzamiento.position).normalized;
-
-        // 3. Instanciar el proyectil
-        // Usamos Quaternion.LookRotation para que el prefab "mire" instantáneamente hacia el objetivo
-        GameObject proyectilInstanciado = Instantiate(prefabHechizo, puntoDeLanzamiento.position, Quaternion.LookRotation(direccion));
-
-        // 4. Inicializar el proyectil
-        // (Esto solo funciona si el prefab tiene el script ProyectilDeHechizo)
-        ProyectilDeHechizo scriptProyectil = proyectilInstanciado.GetComponent<ProyectilDeHechizo>();
-        if (scriptProyectil != null)
-        {
-            scriptProyectil.InicializarLanzamiento(direccion);
-        }
-        else
-        {
-            // Si el script no está, usamos la física por defecto (menos preciso)
-            Rigidbody rb = proyectilInstanciado.GetComponent<Rigidbody>();
-            if (rb != null)
-                rb.linearVelocity = direccion * 20f; // Usar una velocidad genérica
-        }
-
-        if (prefabHechizo == prefabBolaDeFuego && sonidoLanzarFuego != null)
-        {
-            audioSource.PlayOneShot(sonidoLanzarFuego);
-        }
-        else if (prefabHechizo == prefabLanzaDeHielo && sonidoLanzarHielo != null)
-        {
-            audioSource.PlayOneShot(sonidoLanzarHielo);
-        }
-    }
-
-    void LanzarEscudoArcano()
-    {
-        Debug.Log("¡Escudo Arcano lanzado!");
-        escudoActual = cantidadEscudo;
-
+        escudoActual = cantidad;
         if (vfxEscudo != null)
         {
             vfxEscudo.SetActive(true);
         }
-
-        // Opcional: Podrías usar una corrutina aquí para que el escudo dure X segundos
-        // StartCoroutine(DuracionEscudo(10f));
-
-        if (sonidoLanzarEscudo != null)
-        {
-            audioSource.PlayOneShot(sonidoLanzarEscudo);
-        }
+        // Aquí podrías iniciar una corrutina para que el escudo dure X segundos
     }
 
-    // --- LÓGICA DE RECEPCIÓN DE DAÑO (para el Jugador) ---
 
+    // --- LÓGICA DE DAÑO (Sin cambios) ---
     public void RecibirDaño(float cantidad)
     {
         Debug.Log($"Jugador recibe {cantidad} de daño.");
 
-        // 1. El daño golpea el escudo primero
         if (escudoActual > 0)
         {
             float dañoAbsorbido = Mathf.Min(escudoActual, cantidad);
             escudoActual -= dañoAbsorbido;
-            cantidad -= dañoAbsorbido; // Reducimos el daño restante
+            cantidad -= dañoAbsorbido;
 
             Debug.Log($"Escudo absorbió {dañoAbsorbido}. Escudo restante: {escudoActual}");
 
@@ -167,7 +101,6 @@ public class LanzadorDeHechizos : MonoBehaviour
             }
         }
 
-        // 2. Si queda daño, golpea la salud
         if (cantidad > 0)
         {
             saludActual -= cantidad;
@@ -177,7 +110,9 @@ public class LanzadorDeHechizos : MonoBehaviour
         if (saludActual <= 0)
         {
             Debug.Log("¡El jugador ha muerto!");
-            // Lógica de muerte del jugador
         }
     }
+
+    // --- ¡LAS VIEJAS FUNCIONES 'LanzarProyectil' y 'LanzarEscudoArcano' SE ELIMINARON! ---
+    // Su lógica ahora vive dentro de los ScriptableObjects 'HechizoProyectil' y 'HechizoBuff'.
 }
