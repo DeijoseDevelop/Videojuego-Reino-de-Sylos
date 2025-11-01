@@ -572,6 +572,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5727770621469410712, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: hechizosEnBarra.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5727770621469410712, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: 'hechizosEnBarra.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 2f6aa3961f06bf07686e54fed4ba4a45, type: 2}
     - target: {fileID: 8056838077005189036, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
       propertyPath: m_Name
       value: FirstPersonController
