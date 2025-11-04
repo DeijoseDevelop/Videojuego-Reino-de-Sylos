@@ -9,42 +9,59 @@ public class HechizoProyectil : Hechizo
 
     public override void Lanzar(LanzadorDeHechizos lanzador)
     {
-        Debug.Log($"Lanzando Proyectil: {nombreHechizo}");
-
-        // --- 1. Lógica de Raycast (movida desde el Lanzador) ---
-        Vector3 puntoDeMira;
-        RaycastHit hit;
-        Ray rayo = lanzador.camaraDelJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-
-        if (Physics.Raycast(rayo, out hit))
+        // --- ¡¡INICIO DE LA MODIFICACIÓN!! ---
+        
+        // 1. Comprobamos si el jugador tiene suficiente maná Y lo gastamos.
+        //    (Asumimos que 'costoDeMana' existe en tu clase base 'Hechizo.cs')
+        if (lanzador.playerStats.GastarMana(costoDeMana))
         {
-            puntoDeMira = hit.point;
+            // --- ¡ÉXITO! EL MANÁ SE GASTÓ. EJECUTAMOS EL HECHIZO. ---
+            
+            Debug.Log($"Lanzando Proyectil: {nombreHechizo}");
+
+            // --- 2. Lógica de Raycast (tu código original) ---
+            Vector3 puntoDeMira;
+            RaycastHit hit;
+            Ray rayo = lanzador.camaraDelJugador.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+
+            if (Physics.Raycast(rayo, out hit))
+            {
+                puntoDeMira = hit.point;
+            }
+            else
+            {
+                puntoDeMira = rayo.GetPoint(100);
+            }
+
+            Vector3 direccion = (puntoDeMira - lanzador.puntoDeLanzamiento.position).normalized;
+
+            // --- 3. Instanciar (tu código original) ---
+            GameObject proyectilGO = Instantiate(
+                prefabProyectil,
+                lanzador.puntoDeLanzamiento.position,
+                Quaternion.LookRotation(direccion)
+            );
+
+            // --- 4. Inicializar (tu código original) ---
+            // (Asumiendo que tu prefab tiene un script llamado 'ProyectilDeHechizo' como en tu script anterior)
+            ProyectilDeHechizo scriptProyectil = proyectilGO.GetComponent<ProyectilDeHechizo>();
+            if (scriptProyectil != null)
+            {
+                scriptProyectil.InicializarLanzamiento(direccion);
+            }
+
+            // --- 5. Audio (tu código original) ---
+            if (sonidoLanzamiento != null)
+            {
+                lanzador.audioSource.PlayOneShot(sonidoLanzamiento);
+            }
         }
         else
         {
-            puntoDeMira = rayo.GetPoint(100);
+            // --- ¡FALLO! NO HAY SUFICIENTE MANÁ ---
+            // 'PlayerStats.GastarMana()' ya se habrá quejado en la consola.
+            // Opcional: Reproducir un sonido de "fallo" aquí.
         }
-
-        Vector3 direccion = (puntoDeMira - lanzador.puntoDeLanzamiento.position).normalized;
-
-        // --- 2. Instanciar ---
-        GameObject proyectilGO = Instantiate(
-            prefabProyectil,
-            lanzador.puntoDeLanzamiento.position,
-            Quaternion.LookRotation(direccion)
-        );
-
-        // --- 3. Inicializar ---
-        ProyectilDeHechizo scriptProyectil = proyectilGO.GetComponent<ProyectilDeHechizo>();
-        if (scriptProyectil != null)
-        {
-            scriptProyectil.InicializarLanzamiento(direccion);
-        }
-
-        // --- 4. Audio ---
-        if (sonidoLanzamiento != null)
-        {
-            lanzador.audioSource.PlayOneShot(sonidoLanzamiento);
-        }
+        // --- ¡¡FIN DE LA MODIFICACIÓN!! ---
     }
 }

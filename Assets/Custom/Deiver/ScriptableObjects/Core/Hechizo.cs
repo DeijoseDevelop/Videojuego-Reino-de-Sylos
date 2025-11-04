@@ -5,6 +5,7 @@ public abstract class Hechizo : ScriptableObject
 {
     [Header("Info Básica del Hechizo")]
     public string nombreHechizo;
+    public float costoDeMana = 15f;
     [TextArea]
     public string descripcion;
     public Sprite icono;
