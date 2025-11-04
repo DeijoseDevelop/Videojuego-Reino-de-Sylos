@@ -1841,11 +1841,11 @@ MonoBehaviour:
   tagJugador: Player
   rangoAtaque: 2
   merodeoActivo: 1
-  radioMerodeo: 5
-  maxPasoMerodeo: 2
-  pausaEntrePuntos: 1
-  velocidadMerodeo: 2.5
-  intervaloCambioDestino: 2.5
+  radioMerodeo: 3
+  maxPasoMerodeo: 5
+  pausaEntrePuntos: 4
+  velocidadMerodeo: 1
+  intervaloCambioDestino: 5
   distanciaParaNuevoDestino: 0.5
   centroMerodeo: {fileID: 0}
 --- !u!114 &6000102957109391728

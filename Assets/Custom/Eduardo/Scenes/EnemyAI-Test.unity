@@ -567,29 +567,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
-      propertyPath: radioMerodeo
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
       propertyPath: centroMerodeo
       value: 
       objectReference: {fileID: 1427240211}
-    - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
-      propertyPath: maxPasoMerodeo
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
-      propertyPath: pausaEntrePuntos
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
-      propertyPath: velocidadMerodeo
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4802157440857206914, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
-      propertyPath: intervaloCambioDestino
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 6000102957109391728, guid: 34e2cef6fa336f37898e8bea8084004e, type: 3}
       propertyPath: playerTransform
       value: 
