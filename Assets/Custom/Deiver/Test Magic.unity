@@ -523,9 +523,25 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.267
       objectReference: {fileID: 0}
+    - target: {fileID: 631069682620704051, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: m_FillAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1948569108139129679, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
       propertyPath: m_Name
       value: FirstPersonController
+      objectReference: {fileID: 0}
+    - target: {fileID: 3634515312558881252, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4457951453608671498, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4457951453608671498, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5727770621469410712, guid: 88e9b2838b05055fba6602121e4a3107, type: 3}
       propertyPath: hechizosEnBarra.Array.size
